@@ -1,9 +1,15 @@
 from tkinter import *
 from tkinter import ttk
+from configparser import *
+
+from PIL import Image, ImageTk 
+from io import BytesIO  #CONVIERTE IMÁGENES EN BINARIO
 
 import requests
 
-APIKEY = "7f593280"
+config = ConfigParser()
+config.read('config.ini')
+APIKEY = config["OMDB_API"]["APIKEY"]
 URL = "http://www.omdbapi.com/?s={}&apikey={}" #El API KEY lo dejamos también en .format
 
 class Searcher(ttk.Frame):
@@ -61,7 +67,10 @@ class Film(ttk.Frame):
 
         self.lblTitle = ttk.Label(self, text="Titulo")
         self.lblYear = ttk.Label(self, text="1900")
+        self.image = Label(self)
+        self.photo = None
 
+        self.image.pack(side=TOP)
         self.lblTitle.pack(side=TOP)
         self.lblYear.pack(side=TOP)
 
@@ -75,9 +84,19 @@ class Film(ttk.Frame):
 
         self.lblTitle.config(text=self.__encontrada.get("titulo"))
         self.lblYear.config(text=self.__encontrada.get("anno"))
+        self.image = Label(self)
     
+        if self.__encontrada.get("poster") == "N/A":
+            return
+        
+        r = requests.get(self.__encontrada.get("psoter"))
+        if r.status_code == 200:
+            bimage = r.content #Convertimos la imagen en binario
+            image = Image.open(BytesIO(bimage))  #La inyectamos en tkinter
+            self.photo = ImageTk.photoImage(image)
 
-
+            self.image.config(image=self.photo)
+            self.image.image = self.photo
 
 
 '''
