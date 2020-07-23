@@ -32,13 +32,53 @@ class Controller(ttk.Frame):
         self.searcher = Searcher(self, self.busca)
         self.searcher.grid(column=0, row=0)
 
+        self.film = Film(self)
+        self.film.grid(column=0, row=1)
+
     def busca(self, pelicula):
         print(pelicula, "desde el controller")
 
         url = URL.format(pelicula, APIKEY)
         results = requests.get(url)
 
+        if results.status_code == 200:
+            films = results.json()  #sabemos que nuestra APIK siempre devuelve un json
+            if films.get("Response") == "True":
+                pinicula = films.get("Search")[0]
+                otra_pinicula = {"titulo": pinicula.get("Title"), "anno": pinicula.get("Year"), "poster": pinicula.get("Poster")}
+                self.film.encontrada = otra_pinicula
+
+        else:
+            pass
+
         print(results.text)
+
+class Film(ttk.Frame):
+    __encontrada = None
+
+    def __init__(self, parent):
+        ttk.Frame.__init__(self, parent)
+
+        self.lblTitle = ttk.Label(self, text="Titulo")
+        self.lblYear = ttk.Label(self, text="1900")
+
+        self.lblTitle.pack(side=TOP)
+        self.lblYear.pack(side=TOP)
+
+    @property
+    def encontrada(self):
+        return self.__encontrada
+
+    @encontrada.setter
+    def encontrada(self,value):
+        self.__encontrada = value
+
+        self.lblTitle.config(text=self.__encontrada.get("titulo"))
+        self.lblYear.config(text=self.__encontrada.get("anno"))
+    
+
+
+
 
 '''
         if results.status_code == 200:
