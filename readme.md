@@ -5,9 +5,9 @@ Partiendo de la API de PIMDB buscamos la priemra película que coincide con nues
 ## Instalación
 
 1. Instalar dependencias
-'''
+"""
 pip install -r requirements.txt
-'''
+"""
 
 2. Informar tu apikey
 
@@ -17,8 +17,8 @@ Informa el fichero 'config_tempalte.ini' y renombralo a 'config.ini'
 
 ## Ejecutar
 
-'''
+"""
 python main.py
-'''
+"""
 
 Recuerda que necesitas conexión a internet
